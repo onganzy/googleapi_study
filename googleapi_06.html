@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>many Map markers and 街景</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        
+        height: 100%;
+        width: 79%;
+        position: relative;
+        float: right;
+        
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .options-box{
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: 3px;
+        height: 100%;
+        line-height: 35px;       
+        text-align: left;
+        width:20%;         
+         position: relative;
+         float: left;
+      }
+      .container{
+         margin: 0 auto;
+         width:80%;
+         height: 60%;       
+       
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+    <div class="options-box">
+        <h1>show or not show markers</h1>
+        <div>
+           <input id="show-listings" type="button" value="Show Listings">
+           <input id="hide-listings" type="button" value="Hide Listings">
+        </div>
+    </div>
+    <div id="map"></div>
+    
+    </div>
+    <script>
+      var map;
+
+      var markers=[];
+
+      function initMap() {
+        
+        var styles =[             //样式查找：google 地图 api 样式
+        {
+          featureType:'water',
+          stylers:[
+          {color:'#19a0d8'}
+          ]
+        },
+
+         {
+          featureType:'road.highway',
+          elementType:'geometry.stroke',
+          stylers:[
+          {color:'#19a0d8'},
+          {lightness:-40}
+          ]
+        },
+
+              {elementType: 'geometry', stylers: [{color: '#ebe3cd'}]},
+              {elementType: 'labels.text.fill', stylers: [{color: '#523735'}]},
+              {elementType: 'labels.text.stroke', stylers: [{color: '#f5f1e6'}]},
+              {
+                featureType: 'administrative',
+                elementType: 'geometry.stroke',
+                stylers: [{color: '#c9b2a6'}]
+              },
+              {
+                featureType: 'administrative.land_parcel',
+                elementType: 'geometry.stroke',
+                stylers: [{color: '#dcd2be'}]
+              },
+              {
+                featureType: 'administrative.land_parcel',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#ae9e90'}]
+              },
+              {
+                featureType: 'landscape.natural',
+                elementType: 'geometry',
+                stylers: [{color: '#dfd2ae'}]
+              },
+              {
+                featureType: 'poi',
+                elementType: 'geometry',
+                stylers: [{color: '#dfd2ae'}]
+              },
+              {
+                featureType: 'poi',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#93817c'}]
+              },
+              {
+                featureType: 'poi.park',
+                elementType: 'geometry.fill',
+                stylers: [{color: '#a5b076'}]
+              },
+              {
+                featureType: 'poi.park',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#447530'}]
+              },
+              {
+                featureType: 'road',
+                elementType: 'geometry',
+                stylers: [{color: '#ff0000'}]     //小路
+              },
+              {
+                featureType: 'road.arterial',    //主干道
+                elementType: 'geometry',
+                stylers: [{color: '#fdfcf8'}]
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'geometry',
+                stylers: [{color: '#f8c967'}]
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'geometry.stroke',
+                stylers: [{color: '#e9bc62'}]
+              },
+              {
+                featureType: 'road.highway.controlled_access',
+                elementType: 'geometry',
+                stylers: [{color: '#e98d58'}]
+              },
+              {
+                featureType: 'road.highway.controlled_access',
+                elementType: 'geometry.stroke',
+                stylers: [{color: '#db8555'}]
+              },
+              {
+                featureType: 'road.local',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#806b63'}]
+              },
+              {
+                featureType: 'transit.line',
+                elementType: 'geometry',
+                stylers: [{color: '#dfd2ae'}]
+              },
+              {
+                featureType: 'transit.line',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#8f7d77'}]
+              },
+              {
+                featureType: 'transit.line',
+                elementType: 'labels.text.stroke',
+                stylers: [{color: '#ebe3cd'}]
+              },
+              {
+                featureType: 'transit.station',
+                elementType: 'geometry',
+                stylers: [{color: '#dfd2ae'}]
+              },
+              {
+                featureType: 'water',
+                elementType: 'geometry.fill',
+                stylers: [{color: '#b9d3c2'}]
+              },
+              {
+                featureType: 'water',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#92998d'}]
+              }
+
+        ];
+
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat:30.645761,lng:104.049163},   
+          zoom: 17,
+
+          styles:styles,
+          mapTypeControl:false
+        });
+
+       /*
+        var chengdu={lat: 30.6449879, lng: 104.0473177};
+      	var marker=new google.maps.Marker({
+      	position:chengdu,
+      	map:map,
+      	title:'first marker'
+      });
+      */
+        var locations=[
+         {title:'西南入口',location:{lat:30.6449704,lng:104.0459046}},  //在google地图上拾取坐标时,选取点要足够放大，才精确
+         {title:'锦里',location:{lat:30.6448159,lng:104.0499208}},
+         {title:'博物馆',location:{lat:30.645761,lng:104.049163}},  
+        ];
+
+        var largeInfowindow = new google.maps.InfoWindow();
+
+
+        var defaultIcon = makeMarkerIcon('0091ff');
+        var highlightedIcon = makeMarkerIcon('FFFF24');
+
+        //var bounds= new google.maps.LatLngBounds(); //调整地图
+
+        for(var i=0;i<locations.length;i++){
+          var position=locations[i].location;
+          var title=locations[i].title;
+          var marker=new google.maps.Marker({
+           // map:map,
+            position: position,
+            title: title,
+
+            icon:defaultIcon,
+
+            animation: google.maps.Animation.DROP,
+            id:i
+          });
+          markers.push(marker);
+
+          //bounds.extend(marker.position);  //调整窗口
+
+          marker.addListener('click',function(){
+            populateInfoWindow(this,largeInfowindow);
+          });   
+         
+         marker.addListener('mouseover',function(){
+          this.setIcon(highlightedIcon);
+         });
+
+         marker.addListener('mouseout',function(){
+          this.setIcon(defaultIcon);
+         });
+
+        }
+          //map.fitBounds(bounds);       //调整窗口   
+
+          document.getElementById('show-listings').addEventListener('click',showListings);
+          document.getElementById('hide-listings').addEventListener('click',hideListings);
+       }
+
+        function populateInfoWindow(marker,infowindow){
+              if(infowindow.marker != marker){
+                 infowindow.marker = marker;
+                 infowindow.setContent('<div>'+marker.title+'</div>');
+                 infowindow.open(map,marker);
+                 infowindow.addListener('closeclick',function(){
+                 infowindow.setMarker(null);
+                 });
+
+                 var streetViewService = new google.maps.StreetViewService();
+                 var radius = 50;
+
+                 function getStreetView(data,status){
+                       if(status == google.maps.StreetViewStatus.OK){
+                           var nearStreetViewLocation = data.location.latLng;
+                           var heading = google.maps.geometry.spherical.computeHeading(
+                           	nearStreetViewLocation,marker.position);
+                           infowindow.setContent('<div>'+marker.title+'</div><div id="pano"></div>');
+                           var panoramaOptions={
+                           	  position:'http://img.171u.com/image/1105/0610094431219.jpg',//position:nearStreetViewLocation,
+                           	  pov:{
+                           	  	heading:heading,
+                           	  	pitch:30
+                           	  }
+                           	};
+                           	   var panorama = new google.maps.StreetViewPanorama(
+                           	document.getElementById('pano'),panoramaOptions); 
+                           	  }else{
+                           	  	infowindow.setContent('<div>'+marker.title+'</div>'+'<div>No street view found</div>');
+                           	  }
+                           }                          
+
+                           streetViewService.getPanoramaByLocation(marker.position,radius,getStreetView);
+                 			infowindow.open(map,marker);
+                       	}
+                 	}
+                              
+
+          
+      
+
+     function showListings(){
+      var bounds= new google.maps.LatLngBounds();
+      for(var i=0;i<markers.length;i++){
+          markers[i].setMap(map);
+          bounds.extend(markers[i].position);
+      }
+      map.fitBounds(bounds);
+     }
+
+     function hideListings(){
+         for(var i=0;i<markers.length;i++){
+            markers[i].setMap(null);
+         }
+     }
+
+             
+     function makeMarkerIcon(markerColor){
+           var markerImage = new google.maps.MarkerImage(
+             'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +'|40|_|%E2%80%A2',   
+            new google.maps.Size(21,34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10,34),
+            new google.maps.Size(21,34));
+           return markerImage;
+     }
+      
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyB2x3cpCAkME12sc453Ftmi-KtQI4m1QBY&callback=initMap"
+    async defer></script>
+  </body>
+</html>
